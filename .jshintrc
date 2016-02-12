@@ -1,0 +1,20 @@
+{
+	"curly": 			true,
+	"eqeqeq": 		true,
+	"immed": 			true,
+	"noarg": 			true,
+	"quotmark": 	true,
+	"freeze": 		true,
+	"latedef": 		true,
+	"maxdepth":		3,
+	"undef": 			true,
+	"unused": 		true,
+	"maxerr":			20,
+	"nonew":			true,
+
+	"eqnull": 		true,
+
+	"node": 			true,
+	"jquery":			true,
+	"browser":		true
+}

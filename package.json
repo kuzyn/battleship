@@ -1,0 +1,21 @@
+{
+  "name": "express-battleship",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "serve": "node ./bin/www &",
+    "serve:develop": "nodemon ./bin/www & gulp"
+  },
+  "dependencies": {
+    "express": "~4.13.1",
+    "body-parser": "~1.13.2",
+    "jade": "~1.11.0",
+    "jquery": "^2.2.0",
+    "lodash": "^4.3.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.10.0",
+    "gulp": "^3.9.0"
+  }
+}
