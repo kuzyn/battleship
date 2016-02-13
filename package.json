@@ -1,18 +1,21 @@
 {
-  "name": "express-battleship",
-  "version": "0.0.1",
+  "name": "battleship",
+  "version": "0.0.2",
   "private": true,
   "license": "MIT",
   "scripts": {
-    "serve": "node ./bin/www &",
-    "serve:develop": "nodemon ./bin/www & gulp"
+    "serve": "DEBUG=battleship:* node ./bin/www",
+    "serve:background": "node ./bin/www &",
+    "serve:develop": "DEBUG=battleship:* node ./bin/www & gulp",
+    "test": "echo 'no test yet :('"
   },
   "dependencies": {
     "express": "~4.13.1",
     "body-parser": "~1.13.2",
+    "morgan": "~1.6.1",
     "jade": "~1.11.0",
-    "jquery": "^2.2.0",
-    "lodash": "^4.3.0"
+    "lodash": "~4.3.0",
+    "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
     "browser-sync": "^2.10.0",

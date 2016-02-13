@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 var app = require('../app');
-var debug = require('debug')('express-battleship:server');
+var debug = require('debug')('battleship:server');
 var http = require('http');
 
 /**
@@ -49,6 +49,7 @@ function normalizePort(val) {
  */
 function onError(error) {
   if (error.syscall !== 'listen') {
+    process.stderr(error);
     throw error;
   }
 
@@ -57,11 +58,11 @@ function onError(error) {
   // Handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    process.stdout.write(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    process.stdout.write(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -75,5 +76,14 @@ function onError(error) {
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+  if (process.pid) {
+    process.stdout
+    .write(
+           '  ######BATTLE########'+ '\n' +
+           '  ########SHIP########'+ '\n' +
+           '  PID: ' + process.pid + '\n' +
+           '  keep on keeping on aka do the stuff that you do so well :boat: + :boom:' + '\n'
+          );
+  }
   debug('Listening on ' + bind);
 }

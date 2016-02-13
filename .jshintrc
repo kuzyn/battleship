@@ -5,7 +5,6 @@
 	"noarg": 			true,
 	"quotmark": 	true,
 	"freeze": 		true,
-	"latedef": 		true,
 	"maxdepth":		3,
 	"undef": 			true,
 	"unused": 		true,

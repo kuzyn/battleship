@@ -1,7 +1,11 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
+var logger = require('morgan');
+var favicon = require('serve-favicon');
 var app = express();
+
+// My modules
 // var config = require('./config.js');
 
 // Routes
@@ -11,6 +15,8 @@ var game = require('./routes/game');
 var fire = require('./routes/fire');
 
 // Middlewares
+app.use(favicon(path.join(__dirname + '/public', 'favicon.ico')));
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
