@@ -20,14 +20,14 @@ gulp.task('default', ['browser-sync'], function () {
 	gulp.watch('./views/**/*.jade', bs.reload);
 	gulp.watch('./public/**/*.js', bs.reload);
 	gulp.watch('./public/**/*.css', bs.reload);
-	gulp.watch(['./routes/**/*.js', './app.js', './bin/www'], ['bs-delay']);
+	gulp.watch(['./routes/**/*.js', './app.js', './bin/www', './bin/*.js'], ['bs-delay']);
 });
 
 // give nodemon time to restart
 gulp.task('bs-delay', function () {
   setTimeout(function () {
     bs.reload({ stream: false });
-  }, 1000);
+  }, 1500);
 });
 
 // our gulp-nodemon task
