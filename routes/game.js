@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var Board = require('../bin/Board.js');
+var Boat = require('../bin/Boat.js');
 
 /////////////////////////////////////////////////
 // Handle GET to /game by creating a new game //
@@ -13,36 +15,11 @@ var config = {
   }
 };
 
-var rules = {
-  "size": {
-    "carrier": 5,
-    "battleship": 4,
-    "submarine": 3,
-    "destroyer": 3,
-    "patrol_boat": 2
-  }
-};
-
-var board = {
-  "grid": initiateGrid(config)
-};
+var boardInstance = new Board(10, 10);
 
 router.get('/', function(req, res) {
   // res.sendStatus(200);
-  res.json(board);
+  res.json(boardInstance);
 });
-
-function initiateGrid (_conf) {
-  var res = [];
-  var row = [];
-  for (var x = 0; x < _conf.columns; x++) {
-    for (var y = 0; y < _conf.rows; y++) {
-      row.push((x+1)*(y+1));
-    }
-    res.push(row);
-    row = [];
-  }
-  return res;
-}
 
 module.exports = router;
