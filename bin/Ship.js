@@ -1,8 +1,8 @@
   /**
-   * Create a Boat object
+   * Create a Ship object
    * @param {string} _type Named type of our boat, ex. 'submarine'
    */
-  function Boat(_type) {
+  function Ship(_type) {
     this.type = _type;
     this.code = _type.charAt(0).toUpperCase();
     this.size = this.rules(_type);
@@ -15,25 +15,25 @@
   }
 
   /**
-   * Share a size reference between all Boat
-   * @type {object} _boat
+   * Return a Ship size
+   * @type {object} _ship
    */
-  Boat.prototype.rules = function(_boat) {
+  Ship.prototype.rules = function(_ship) {
     var size = {
                 "carrier": 5,
                 "battleship": 4,
                 "submarine": 3,
                 "destroyer": 3,
-                "patrol_boat": 2
+                "patrol_ship": 2
               };
-    return size[_boat];
+    return size[_ship];
   };
 
   /**
-   * Register a hit on our Boat
+   * Register a hit on our Ship
    * @return {[type]} [description]
    */
-  Boat.prototype.hit = function() {
+  Ship.prototype.hit = function() {
     var self = this;
     if (!!self.health) {
       if (self.health > 1) {
@@ -46,4 +46,8 @@
     return 'X';
   };
 
-module.exports = Boat;
+  Ship.prototype.place = function(_board, _shipType) {
+    var grid = _board.grid;
+  };
+
+module.exports = Ship;

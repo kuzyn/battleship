@@ -28,10 +28,10 @@
   function formatGrid(_result) {
     var ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var $output = $('.output');
-    for (var y = 0, grid = _result.grid; y < grid.length; y++) {
-      $output.append('<div class="row row-' + y + '"></div>');
-      for (var x = 0; x < grid[y].length; x++) {
-        $('.row-' + y).append('<div class="tile tile-' + ALPHA.charAt(y) + '_' + x + '">' + grid[x][y] + '</div>');
+    for (var x = 0, xz = _result.length; x < xz; x++) {
+      $output.append('<div class="row row-' + x + '"></div>');
+      for (var y = 0, yz = _result[x].length; y < yz; y++) {
+        $('.row-'+x).append('<div class="tile tile-' + ALPHA.charAt(y) + '_' + x + '">' + _result[x][y] + '</div>');
       }
     }
   }
