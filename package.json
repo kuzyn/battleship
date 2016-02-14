@@ -4,9 +4,10 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "serve": "DEBUG=battleship:* node ./bin/www",
-    "serve:background": "node ./bin/www &",
-    "serve:develop": "DEBUG=battleship:* node ./bin/www & gulp",
+    "serve": "NODE_ENV=production node ./bin/www",
+    "serve:background": "NODE_ENV=production BG_MODE=true node ./bin/www &",
+    "serve:debug": "NODE_ENV=development DEBUG=* node ./bin/www",
+    "serve:develop": "gulp",
     "test": "echo 'no test yet :('"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.10.0",
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.0",
+    "gulp-nodemon": "^1.0.4"
   }
 }
