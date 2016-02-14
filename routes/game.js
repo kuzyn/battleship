@@ -8,8 +8,7 @@ var Ship = require('../bin/Ship.js');
 ////////////////////////////////////////////////
 
 var config = {
-  "columns": 10,
-  "rows": 10,
+  "size": 10, // only a square grid is allowed (see Board.js)
   "fleet": {
     "battleship": 1
   }

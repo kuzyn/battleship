@@ -1,18 +1,32 @@
+///////////////////
+// Board object! //
+///////////////////
+
 var rotate = require('matrix-rotate');
 
+/**
+ * This object holds our board settings
+ * @param {object} _config our passed config object containing size and fleet infos
+ */
 function Board(_config) {
-  this.grid = this.initiate(_config.columns, _config.rows);
-  this.dirg = this.reverse(this.initiate(_config.columns, _config.rows));
+  this.grid = this.initiate(_config.size);
+  this.dirg = this.reverse(this.initiate(_config.size)); // This is a flipped matrix to check our vertical placements
   this.gridState = this.grid;
-  this.status = undefined;
+  this.matchState = true; // i.e. game state
+  this.activeShips = _config.fleet;
 }
 
-Board.prototype.initiate = function(_x, _y) {
+/**
+ * Function to initiate our Board
+ * @param  {int} _size Size of our square (we will rotate the matrix so it needs to be square)
+ * @return {array}    return a 2D array with each position numbered
+ */
+Board.prototype.initiate = function(_size) {
   var res = [];
   var row = [];
   var counter = 0;
-  for (var x = 0, xz = _x; x < xz; x++) {
-    for (var y = 0, yz = _y; y < yz; y++) {
+  for (var x = 0, xz = _size; x < xz; x++) {
+    for (var y = 0, yz = _size; y < yz; y++) {
       counter++;
       row.push(counter);
     }
@@ -22,9 +36,13 @@ Board.prototype.initiate = function(_x, _y) {
   return res;
 };
 
+/**
+ * A helper to rotate our matrix
+ * @param  {int} _grid Our square's size
+ * @return {array}       A rotated version of our grid
+ */
 Board.prototype.reverse = function(_grid) {
-  var dirg = rotate(_grid);
-  return dirg;
+  return rotate(_grid);
 };
 
 module.exports = Board;
