@@ -6,7 +6,7 @@ var router = express.Router();
 //////////////////////
 
 router.get('/', function(req, res) {
-  // res.sendStatus(200)
+  // res.sendStatus(200);
   res.render('client', req.locals);
 });
 
