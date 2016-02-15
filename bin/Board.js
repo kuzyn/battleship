@@ -47,6 +47,11 @@ Board.prototype.reverse = function(_grid) {
   return rotate(_grid);
 };
 
+
+///////////////////
+// REFACTOR THIS //
+///////////////////
+
 Board.prototype.populate = function(_ships) {
   var self = this;
   var grid = [];

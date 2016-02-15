@@ -1,7 +1,21 @@
-# Description
-BATTLESHIP!
+## Description
+### BATTLESHIP!
 
-# License
+### "Come come, commander, you enjoy firing torpedo just as much as I do."
+
+A simple implementation of the battleship game. Ahoy!
+
+:boat: => :boom:
+
+## Deploy
+`npm install`  
+`npm serve`
+
+This will create an interface where you can play at `localhost:3000`
+
+See `package.json`
+
+## License
 The MIT License (MIT)
 Copyright (c) 2016 Samuel Cousin
 
