@@ -27,7 +27,7 @@ Ship.prototype.rules = function(_ship) {
     "battleship": 4,
     "submarine": 3,
     "destroyer": 3,
-    "patrol_ship": 2
+    "patrol_boat": 2
   };
   return size[_ship];
 };

@@ -67,6 +67,7 @@ Board.prototype.populate = function(_ships) {
     var ship = new Ship(shipsRemaining.pop());
 
     while (!placed) {
+      var positionBuffer = [];
       var cursor = [getRandomInt(0, matrix.length - ship.size), getRandomInt(0, matrix.length - ship.size)];
       var cursorEnd = horizontal ? [cursor[0], cursor[1] + (ship.size) - 1] : [cursor[0] + (ship.size) - 1, cursor[1]];
       ship.position.bow = cursor;
@@ -74,24 +75,41 @@ Board.prototype.populate = function(_ships) {
 
       if (horizontal) {
         for (var i = cursor[1]; i < cursorEnd[1] + 1; i++) {
-          returnGrid[cursor[0]][i] = ship.code;
-          occupiedTiles.push([cursor[0],[i]]);
+          positionBuffer.push([cursor[0],i]);
         }
       } else {
-        for (var y = cursor[0]; y < cursorEnd[0] + 1; y++) {
-          returnGrid[y][cursor[1]] = ship.code;
-          occupiedTiles.push([[y],cursor[1]]);
+        for (var j = cursor[0]; j < cursorEnd[0] + 1; j++) {
+          positionBuffer.push([j,cursor[1]]);
         }
       }
 
-      occupiedTiles = occupiedTiles.reverse();
-      placed = true;
+      if (noCollision(positionBuffer, returnGrid)) {
+        for (var k = 0; k < positionBuffer.length; k++) {
+          var x = positionBuffer[k][0];
+          var y = positionBuffer[k][1];
+          returnGrid[x][y] = ship.code;
+        }
+        occupiedTiles.push(positionBuffer);
+        occupiedTiles = horizontal ? occupiedTiles.reverse() : occupiedTiles;
+        placed = true;
+      }
     }
+    // console.log(occupiedTiles);
   }
 
-  console.log(occupiedTiles);
   return returnGrid;
 
+  // Helper to check for already placed boats
+  function noCollision(_buffer, _matrix) {
+    var conflicts = 0;
+    var pointer = [];
+    for (var i = 0; i < _buffer.length; i++) {
+      pointer = [_buffer[i][0], _buffer[i][1]];
+      conflicts += !_.isSafeInteger(_matrix[pointer[0]][pointer[1]]) ? 1 : 0;
+    }
+    console.log('conflicts:', conflicts);
+    return !conflicts;
+  }
 
   function decideOrientation() {
     return Math.random() < 0.5 ? true : false;
@@ -109,8 +127,8 @@ Board.prototype.populate = function(_ships) {
   }
 
   // Tiny helper to get a random int
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
+  function getRandomInt(_min, _max) {
+    return Math.floor(Math.random() * (_max - _min)) + _min;
   }
 
 };
