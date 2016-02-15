@@ -14,7 +14,7 @@
     "body-parser": "~1.13.2",
     "express": "~4.13.1",
     "jade": "~1.11.0",
-    "lodash": "~4.3.0",
+    "lodash": "^4.3.0",
     "matrix-rotate": "0.0.2",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0"
