@@ -54,52 +54,48 @@ Board.prototype.reverse = function(_grid) {
 
 Board.prototype.populate = function(_ships) {
   var self = this;
-  var grid = [];
   var occupiedTiles = [];
   var shipsRemaining = getShipList();
-  var inService = [];
-  var ship = {};
-  var cursor = [];
-  var cursorEnd = [];
   var returnGrid = self.grid;
 
   while (!!shipsRemaining.length) {
     var placed = false;
-    var random = Math.random();
-    var horizontal = random < 0.5 ? true : false;
-    ship = new Ship(shipsRemaining.pop());
+    var horizontal = decideOrientation();
+    var matrix = horizontal ? self.grid : self.dirg; // grid = vertical align, dirg = horizontal align
+
+    // Create our ship
+    var ship = new Ship(shipsRemaining.pop());
 
     while (!placed) {
-      var tempCursor;
-      grid = horizontal ? self.grid : self.dirg; // grid = vertical align, dirg = horizontal align
-      cursor = [getRandomInt(0, grid.length), getRandomInt(0, grid.length-ship.size)];
-      cursorEnd = horizontal ? [cursor[0], cursor[1]+(ship.size-1)] : [cursor[0]+(ship.size-1), cursor[1]];
+      var cursor = [getRandomInt(0, matrix.length - ship.size), getRandomInt(0, matrix.length - ship.size)];
+      var cursorEnd = horizontal ? [cursor[0], cursor[1] + (ship.size) - 1] : [cursor[0] + (ship.size) - 1, cursor[1]];
       ship.position.bow = cursor;
       ship.position.stern = cursorEnd;
 
       if (horizontal) {
-        for (var i = 0; i < ship.size; i++) {
-          tempCursor = [cursor[0], cursorEnd[1]-i];
-          returnGrid[cursor[0]][cursorEnd[1]-i] = ship.code;
-          occupiedTiles.push(tempCursor);
+        for (var i = cursor[1]; i < cursorEnd[1] + 1; i++) {
+          returnGrid[cursor[0]][i] = ship.code;
+          occupiedTiles.push([cursor[0],[i]]);
         }
       } else {
-        for (var y = 0; y < ship.size; y++) {
-          tempCursor = [cursor[0]+y, cursorEnd[1]];
-          returnGrid[cursor[0]+y][cursorEnd[1]] = ship.code;
-          occupiedTiles.push(tempCursor);
+        for (var y = cursor[0]; y < cursorEnd[0] + 1; y++) {
+          returnGrid[y][cursor[1]] = ship.code;
+          occupiedTiles.push([[y],cursor[1]]);
         }
       }
 
-      occupiedTiles = horizontal ? occupiedTiles.reverse(): occupiedTiles;
-
+      occupiedTiles = occupiedTiles.reverse();
       placed = true;
     }
-
-    inService.push(ship);
   }
 
+  console.log(occupiedTiles);
   return returnGrid;
+
+
+  function decideOrientation() {
+    return Math.random() < 0.5 ? true : false;
+  }
 
   // Helper to get a list of ships to place
   function getShipList() {
