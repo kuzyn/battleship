@@ -20,11 +20,11 @@ var config = {
 
 var boardInstance = new Board(config);
 
-boardInstance.populate();
-// console.log(JSON.stringify(boardInstance.activeShips));
+// console.log(JSON.stringify(boardInstance));
 
 router.get('/', function(req, res) {
   // res.sendStatus(200);
+  boardInstance.populate();
   res.json(boardInstance.gridPopulated);
 });
 
