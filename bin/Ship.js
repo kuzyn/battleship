@@ -2,6 +2,8 @@
 // Ship object! //
 //////////////////
 
+var debug = require('debug')('battleship:routes/game');
+
 
 /**
  * Constructor for a Ship object
@@ -43,9 +45,11 @@ Ship.prototype.hit = function() {
   if (!!this.health) {
     if (this.health > 1) {
       this.health--;
+      debug(this.type + 'hit');
       return this.health;
     }
     this.health--;
+    debug(this.type + 'destroyed');
     return this.health;
   }
   return 'X';

@@ -3,10 +3,25 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var favicon = require('serve-favicon');
+var Board = require('./bin/Board.js');
+var debug = require('debug')('battleship:app');
 var app = express();
 
-// My modules
-// var config = require('./config.js');
+/////////////////////////
+// BATTLESHIP SETTINGS //
+/////////////////////////
+var config = {
+  "size": 10, // only a square grid is allowed
+  "fleet": {
+    "carrier": 1,
+    "battleship": 1,
+    "submarine": 1,
+    "destroyer": 2,
+    "patrol_boat": 1
+  }
+};
+
+app.locals.game = new Board(config);
 
 // Routes
 var client = require('./routes/client'); // Client page route
