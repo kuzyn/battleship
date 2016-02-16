@@ -23,12 +23,25 @@ function Board(_config) {
   this.tilesWithShips = [];
 }
 
-Board.prototype.reset = function () {
+
+/**
+ * Reset the grid by removing all ships & clearing the board
+ * @param {function} _cb Optional callback to execute after
+ */
+Board.prototype.reset = function(_cb) {
   debug('reset');
+
   this.activeShips = [];
   this.tilesWithShips = [];
   this.gameOn = false;
   this.grid = this.gridPristine;
+
+  if (_cb && _.isFunction(_cb)) {
+    setTimeout(function() {
+      _cb();
+    }, 200);
+  }
+
 };
 
 

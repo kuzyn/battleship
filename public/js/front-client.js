@@ -24,6 +24,7 @@
       console.info('$.ajax.complete');
       formatGrid(result);
       $('.output-raw').html(JSON.stringify(result, null, 2));
+      $('.tile .content, .output-raw').toggleClass('hidden');
     });
   });
 

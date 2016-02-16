@@ -16,10 +16,14 @@ router.get('/', function(req, res) {
   //   game.grid = game.populate();
 
   if (board.gameOn) {
-    board.reset();
+    debug('gameOn '+ board.gameOn);
+    board.reset(function() {
+      board.grid = board.populate();
+    });
+  } else {
+    board.populate();
   }
 
-  board.populate()
   res.json(board);
 });
 
