@@ -40,14 +40,13 @@ Ship.prototype.rules = function(_ship) {
  * @return {[type]} [description]
  */
 Ship.prototype.hit = function() {
-  var self = this;
-  if (!!self.health) {
-    if (self.health > 1) {
-      self.health--;
-      return self.health;
+  if (!!this.health) {
+    if (this.health > 1) {
+      this.health--;
+      return this.health;
     }
-    self.health--;
-    return self.health;
+    this.health--;
+    return this.health;
   }
   return 'X';
 };
