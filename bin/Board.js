@@ -13,6 +13,7 @@ var debug = require('debug')('battleship:Board');
  * @param {object} _config our passed config object containing size and fleet infos
  */
 function Board(_config) {
+  this.id = Math.floor(Math.random() * (9999 - 0)) + 0;
   this.size = _config.size;
   this.ships = _config.fleet;
   this.gridPristine = this.initiate(this.size);
@@ -31,22 +32,22 @@ function Board(_config) {
 Board.prototype.reset = function(_cb) {
   debug('reset');
 
+  this.id = Math.floor(Math.random() * (9999 - 0)) + 0;
+  this.gridPristine = this.initiate(this.size);
   this.activeShips = [];
   this.tilesWithShips = [];
   this.gameOn = false;
   this.grid = this.gridPristine;
 
   if (_cb && _.isFunction(_cb)) {
-    setTimeout(function() {
-      _cb();
-    }, 200);
+    _cb();
   }
 
 };
 
 
 /**
- * Function to initilize our Board with numbered tiles
+ * Initilize our Board with numbered tiles
  * @param  {int} _size Size of our square (we will rotate the matrix so it needs to be square)
  * @return {array}    return a 2D array with each position numbered
  */
@@ -68,7 +69,7 @@ Board.prototype.initiate = function(_size) {
 
 
 /**
- * A helper to rotate our matrix
+ * Rrotate our matrix
  * @param  {int} _grid Our square's size
  * @return {array}       A rotated version of our grid
  */
@@ -78,7 +79,7 @@ Board.prototype.reverse = function(_grid) {
 
 
 /**
- * This populates our board & randomly bruteforce our grid for collisions...inelegant but works & easy to refactor
+ * Populates our board & bruteforce our grid for collisions. This is the main event :)
  * @param  {object} _ships A list of our boats + their number
  * @return {array}        Returns a populated version of our grid
  */
@@ -101,26 +102,25 @@ Board.prototype.populate = function() {
     while (!placed && !this.gameOn) {
       var size = ship.size; // size of our ship
       var max = matrix.length - size; // make sure our boat stays within the board's edge
-      var pos = [];
-      var posEnd = [];
+      var pos = [getRandomInt(0, max), getRandomInt(0, max)];
+      var posEnd = horizontal ? [pos[0], pos[1] + size - 1] : [pos[0] + size - 1, pos[1]];
       var posBuffer = [];
+      var flatten = _.flatten(occupiedTiles);
 
-      // while (pos === posEnd || _.find(_.flatten(occupiedTiles, pos)) || _.find(_.flatten(occupiedTiles, posEnd))) {
+      // pre-emptive check for collisions
+      while (_.find(flatten, pos) || _.find(flatten, posEnd)) {
         pos = [getRandomInt(0, max), getRandomInt(0, max)];
         posEnd = horizontal ? [pos[0], pos[1] + size - 1] : [pos[0] + size - 1, pos[1]];
-        posBuffer = [];
-        ship.position.bow = pos;
-        ship.position.stern = posEnd;
-      // }
+      }
 
       // save our positions into a buffer that we can test for collisions
       if (horizontal) {
         for (var i = pos[1]; i < posEnd[1] + 1; i++) {
-          posBuffer.push([pos[0],i]);
+          posBuffer.push([pos[0], i]);
         }
       } else {
         for (var j = pos[0]; j < posEnd[0] + 1; j++) {
-          posBuffer.push([j,pos[1]]);
+          posBuffer.push([j, pos[1]]);
         }
       }
 
@@ -134,21 +134,27 @@ Board.prototype.populate = function() {
         occupiedTiles.push(posBuffer);
         occupiedTiles = horizontal ? occupiedTiles.reverse() : occupiedTiles;
         shipsCollection.push(ship);
+        ship.position.bow = pos;
+        ship.position.stern = posEnd;
         placed = true;
       } else {
         collisionsCounter++;
       }
 
-      // tiny bit of error handling
-      if (collisionsCounter > 2000) {
-        var err = new Error(collisionsCounter + ' collisions, try reducing the number of ships or refreshing the page');
-        throw err;
+      // error handling (now throwing a new Error object to keep execution going)
+      if (collisionsCounter > 200) {
+        try {
+          var err = collisionsCounter + ' collisions, try reducing the number of ships or refreshing the page';
+          throw err;
+        } catch (err) {
+          debug(err);
+          break;
+        }
       }
-
     }
-  }
+  } // while (!!shipsRemaining.length)
 
-  // meat
+  // all of our ships are placed
   debug('Grid solved in ' + collisionsCounter + ' passes');
   this.gameOn = true;
   return populatedGrid;
