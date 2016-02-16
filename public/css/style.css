@@ -7,4 +7,9 @@ body {
   width: 40px;
   height: 40px;
   text-align: center;
+  border: 1px lightblue solid;
+}
+
+.hidden {
+  visibility: hidden;
 }
