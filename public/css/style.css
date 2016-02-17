@@ -16,6 +16,10 @@ h1 {
   padding-top: 40px;
 }
 
+.shot-fired {
+  padding-left: 20px;
+}
+
 .tile {
   float: left;
   width: 40px;

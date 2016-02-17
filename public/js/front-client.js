@@ -5,6 +5,8 @@
 (function() {
   $(document).on('ready', initiateGame());
 
+  var fireCounter = 0;
+
   function initiateGame() {
     console.info('document.ready');
     var result;
@@ -38,6 +40,9 @@
   $('#reset').click(function(e) {
     e.stopPropagation();
     $('.output').html('');
+    $('#coordinates').val('');
+    $('.results').html('');
+    fireCounter = 0;
     initiateGame();
   });
 
@@ -65,6 +70,8 @@
     })
     .always(function() {
       // Always callback
+      fireCounter++;
+      $('.fire-counter').html('<span>' + fireCounter + '</span>')
       $('#coordinates').val('');
     });
   });
