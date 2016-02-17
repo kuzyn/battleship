@@ -1,33 +1,28 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
+// Module dependencies
 var app = require('../app');
 var debug = require('debug')('battleship:www');
 var http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
+// Get port from environment and store in Express
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
+// Create HTTP server
 var server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+// Listen on provided port, on all network interfaces
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
+// Catch the exeptions & keep our thread going
+process.on('uncaughtException', function (err) {
+  debug('Caught exception: ' + err);
+});
+
+//Normalize a port into a number, string, or false
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
@@ -44,9 +39,7 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Callback for our HTTP server "error" event.
- */
+// Callback for our HTTP server "error" event
 function onError(error) {
   if (error.syscall !== 'listen') {
     process.stderr(error);
@@ -70,9 +63,7 @@ function onError(error) {
   }
 }
 
-/**
- * Callback for our HTTP server "listening" event.
- */
+// Callback for our HTTP server "listening" event
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
@@ -82,12 +73,15 @@ function onListening() {
            '  ######BATTLE########'+ '\n' +
            '  ########SHIP########'+ '\n' +
            '  PID: ' + process.pid + '\n' +
-           '  keep on keeping on aka do the stuff that you do so well' + '\n' +
            '\n'
           );
     if (process.env['BG_MODE']) {
-      process.stdout.write('  you\'ve put my battleship in background! press ENTER to go back to the prompt\n');
+      process.stdout.write('  you\'ve sunk my battleship in the background! press ENTER to go back to the prompt\n');
     }
   }
-  debug('Listening on ' + bind);
+  if (process.env['NODE_ENV'] === 'development') {
+    debug('Listening on ' + bind + ' and proxying browser-sync on 4000');
+  } else {
+    debug('Listening on ' + bind);
+  }
 }

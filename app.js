@@ -33,7 +33,7 @@ var config = {
 
 app.locals.game = new Board(config);
 
-debug('New game ID: ' + app.locals.game.id);
+debug('Game ID: ' + app.locals.game.id);
 
 // Routes
 var client = require('./routes/client'); // Client page route
