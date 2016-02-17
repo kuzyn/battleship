@@ -6,14 +6,18 @@ var debug = require('debug')('battleship:routes/game');
 router.get('/', function(req, res) {
   debug('GET');
   var board = req.app.locals.game;
+  var executing = false;
 
-  if (board.gameOn) {
+  if (board.gameOn && !executing) {
+    executing = true;
     debug('gameOn '+ board.gameOn);
     board.reset(function() {
       board.grid = board.populate();
+      executing = false;
     });
   } else {
-    board.populate();
+    board.grid = board.populate();
+    executing = false;
   }
 
   res.json(board);

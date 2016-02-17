@@ -13,11 +13,7 @@ function Ship(_type, _size) {
   this.type = _type;
   this.code = _type.charAt(0).toUpperCase();
   this.size = _size;
-  this.health = this.size;
-  this.position = {
-    "bow": [undefined, undefined],
-    "stern": [undefined, undefined]
-  };
+  this.health = _size[_type];
 }
 
 /**
