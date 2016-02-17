@@ -7,9 +7,11 @@ var Board = require('./bin/Board.js');
 var debug = require('debug')('battleship:app');
 var app = express();
 
+
 /////////////////////////
 // BATTLESHIP SETTINGS //
 /////////////////////////
+
 var config = {
   "size": 10, // only a square grid is allowed
   "fleet": {
@@ -17,11 +19,21 @@ var config = {
     "battleship": 1,
     "submarine": 1,
     "destroyer": 2,
-    "patrol_boat": 1
+    "patrol_boat": 1,
+  },
+  "boat_length": {
+    "carrier": 5,
+    "battleship": 4,
+    "submarine": 3,
+    "destroyer": 3,
+    "patrol_boat": 2
   }
 };
 
+
 app.locals.game = new Board(config);
+
+debug('New game ID: ' + app.locals.game.id);
 
 // Routes
 var client = require('./routes/client'); // Client page route
@@ -32,7 +44,9 @@ var fire = require('./routes/fire');
 // Middlewares
 app.use(favicon(path.join(__dirname + '/public', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(bodyParser.json());
 
 // View engine setup
