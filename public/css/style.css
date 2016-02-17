@@ -1,5 +1,12 @@
 body {
+  padding-top: 20px;
   background: cornflowerblue;
+}
+
+
+.letter-coordinates .tile,
+.number-coordinates {
+  background: blue;
 }
 
 .tile {

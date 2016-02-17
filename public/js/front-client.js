@@ -24,12 +24,12 @@
       console.info('$.ajax.complete');
       formatGrid(result);
       $('.output-raw').html(JSON.stringify(result, null, 2));
-      $('.tile .content, .output-raw').toggleClass('hidden');
+      $('.board .content, .output-raw').toggleClass('hidden');
     });
   });
 
   $('#debug-mode').click(function() {
-    $('.tile .content, .output-raw').toggleClass('hidden');
+    $('.board .content, .output-raw').toggleClass('hidden');
   });
 
   $('#fire').submit(function(event) {
@@ -53,19 +53,35 @@
   });
 
   function formatGrid(_result) {
-    var ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var board = _result.grid;
     var $output = $('.output');
     var tileType;
-    for (var x = 0, xz = board.length; x < xz; x++) {
-      $output.append('<div class="row row-' + x + '"></div>');
-      for (var y = 0, yz = board[x].length; y < yz; y++) {
+    var max = board.length;
+    var x = 0;
+    var y = 0;
+
+    for (x = 0; x < max; x++) {
+      if (y === 0) {
+        $output.prepend('<div class="row letter-coordinates"></div>');
+      }
+
+      $output.append('<div class="row board row-' + x + '"></div>');
+
+      for (y = 0; y < max + 1; y++) {
         tileType = $.isNumeric(board[x][y]) ? 'not-occupied' : 'occupied';
+        if (y === 0) {
+          $('.letter-coordinates').append('<div class="tile"><span class="content">' + alpha.charAt(x) + '</span></div>');
+        }
+        if (y === max) {
+            $('.row-'+x).append('<div class="number-coordinates tile">' + x + '</div>')
+        } else {
         $('.row-'+x).append(
-          '<div class="tile tile-' + ALPHA.charAt(y) + '_' + x + '">' +
-          '<span class="content hidden ' + tileType + '">' + board[x][y] +
-          "</span>" + '</div>'
+          '<div class="tile tile-' + alpha.charAt(y) + '_' + x + '">' +
+          '<span class="content hidden ' + tileType + '">' +
+          board[x][y] + '</span>' + '</div>'
         );
+      }
       }
     }
   }
