@@ -3,7 +3,9 @@
 ////////////////////////////////
 
 (function() {
-  $(document).on('ready', function() {
+  $(document).on('ready', initiateGame());
+
+  function initiateGame() {
     console.info('document.ready');
     var result;
     var request = $.ajax({
@@ -24,12 +26,19 @@
       console.info('$.ajax.complete');
       formatGrid(result);
       $('.output-raw').html(JSON.stringify(result, null, 2));
-      $('.board .content, .output-raw').toggleClass('hidden');
+      $('.board .content, .output-raw').removeClass('hidden'); //foobar
     });
+  }
+
+  $('#debug-mode').click(function(e) {
+    e.stopPropagation();
+    $('.board .content, .output-raw').toggleClass('hidden');
   });
 
-  $('#debug-mode').click(function() {
-    $('.board .content, .output-raw').toggleClass('hidden');
+  $('#reset').click(function(e) {
+    e.stopPropagation();
+    $('.output').html('');
+    initiateGame();
   });
 
   $('#fire').submit(function(event) {
@@ -48,6 +57,7 @@
     .done(function(data) {
       // Success callback
       console.log('POST.done', data);
+      $('.results').html('<span>' + data + '</span>')
     })
     .fail(function(error) {
       // Error callback

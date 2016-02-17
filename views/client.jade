@@ -7,10 +7,19 @@ block content
       .output
         
     .col.col-md-6.input
-      h1 hello BATTLESHIP world master here are your ctrls
+      h1 Ahoy BATTLESHIP world master player looking for a thrill on the information superhighway of cutting-edge
+      
+      h2 your ctrls
       form(id="fire", method="POST", action="/api/fire", class="form-inline")
         input(id="coordinates", class="form-control" type="text", placeholder="coordinates (i.e. a5)", autocomplete="off", required="true", pattern="\\D\\d+")
         button(type="submit", class="btn btn-default") boom!
+        a(id="reset", class="btn btn-default", role="button", href="#") reset game
+      
+      h2 results
+        pre
+          .results.form-control
+      
+      h2 seagodmode
       a(id="debug-mode", class="btn btn-default", role="button", href="#") toggle debug mode
       
   .container
