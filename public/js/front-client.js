@@ -57,7 +57,7 @@
     .done(function(data) {
       // Success callback
       console.log('POST.done', data);
-      $('.results').html('<span>' + data + '</span>')
+      $('.results').html('<span>' + data.message + ' ' + data.type + ' ' + convertAlphaNumeric(coordinates) + '</span>');
     })
     .fail(function(error) {
       // Error callback
@@ -72,10 +72,24 @@
   function convertAlphaNumeric(_what) {
     var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var numeric = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+    var string = _what;
 
+    // if we give an array of coordinates
+    if ($.isArray(string)) {
+
+      var x = string[0];
+      var y = string[1];
+
+      if (!$.isNumeric(x)) {
+        return [numeric[alpha.indexOf(x.toUpperCase())], y];
+      }
+
+      return [alpha.charAt(x), y];
+    }
+
+    // if we give a single coordinate to convert
     if (!$.isNumeric(_what)) {
-      var uc = _what.toUpperCase();
-      return numeric[alpha.indexOf(uc)];
+      return numeric[alpha.indexOf(_what.toUpperCase())];
     }
 
     return alpha.charAt(_what);

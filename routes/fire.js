@@ -25,9 +25,19 @@ router.post('/', function(req, res) {
 
   if (!_.isEmpty(ship) && grid[x][y] !== 'X') {
     ship[0].hit();
-    res.send('HIT ' + ship[0].type);
+    res.json({
+      hit: true,
+      message: 'HIT',
+      type: ship[0].type,
+      coordinates: [x, y]
+    });
   } else {
-    res.send('MISSED ' + req.body.coordinates);
+    res.json({
+      hit: false,
+      message: 'MISSED',
+      type: '',
+      coordinates: [x, y]
+    });
   }
 });
 
