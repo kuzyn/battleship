@@ -18,7 +18,7 @@ function Board(_config) {
   this.ships = _config.fleet;
   this.gridPristine = this.initiate(this.size, 'gridPristine');
   this.grid = this.initiate(this.size, 'grid');
-  this.dirg = this.reverse(this.initiate(this.size, 'dirg')); // This is a flipped matrix to do our vertical placements
+  this.dirg = rotate(this.initiate(this.size, 'dirg')); // This is a flipped matrix to do our vertical placements
   this.gameOn = false; // playing = true;
   this.activeShips = [];
   this.tilesWithShips = [];
@@ -66,16 +66,6 @@ Board.prototype.initiate = function(_size, _caller) {
     row = [];
   }
   return res;
-};
-
-
-/**
- * Rrotate our matrix
- * @param  {int} _grid Our square's size
- * @return {array}       A rotated version of our grid
- */
-Board.prototype.reverse = function(_grid) {
-  return rotate(_grid);
 };
 
 

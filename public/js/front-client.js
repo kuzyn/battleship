@@ -56,10 +56,16 @@
     var ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var board = _result.grid;
     var $output = $('.output');
+    var tileType;
     for (var x = 0, xz = board.length; x < xz; x++) {
       $output.append('<div class="row row-' + x + '"></div>');
       for (var y = 0, yz = board[x].length; y < yz; y++) {
-        $('.row-'+x).append('<div class="tile tile-' + ALPHA.charAt(y) + '_' + x + '">' + '<span class="content hidden">' + board[x][y] + "</span>" + '</div>');
+        tileType = $.isNumeric(board[x][y]) ? 'not-occupied' : 'occupied';
+        $('.row-'+x).append(
+          '<div class="tile tile-' + ALPHA.charAt(y) + '_' + x + '">' +
+          '<span class="content hidden ' + tileType + '">' + board[x][y] +
+          "</span>" + '</div>'
+        );
       }
     }
   }

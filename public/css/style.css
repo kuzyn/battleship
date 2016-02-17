@@ -9,3 +9,11 @@ body {
   text-align: center;
   border: 1px lightblue solid;
 }
+
+.tile .occupied {
+  font-weight: bolder;
+}
+
+.tile .not-occupied {
+  font-weight: lighter;
+}
