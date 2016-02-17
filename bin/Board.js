@@ -55,11 +55,9 @@ Board.prototype.initiate = function(_size) {
   debug('initiate');
   var res = [];
   var row = [];
-  var counter = 0;
   for (var x = 0, xz = _size; x < xz; x++) {
     for (var y = 0, yz = _size; y < yz; y++) {
-      counter++;
-      row.push(counter);
+      row.push(0);
     }
     res.push(row);
     row = [];
@@ -124,8 +122,10 @@ Board.prototype.populate = function() {
           populatedGrid[x][y] = ship.code;
         }
 
-        occupiedTiles.push(posBuffer);
         occupiedTiles = horizontal ? occupiedTiles.reverse() : occupiedTiles;
+
+        occupiedTiles.push(posBuffer);
+        ship.setTiles(posBuffer);
 
         shipsCollection.push(ship);
         placed = true;

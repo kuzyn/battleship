@@ -33,18 +33,25 @@
   });
 
   $('#fire').submit(function(event) {
-    var url = $(document.activeElement).attr('url');
-    var target = $('#coordinates').val();
+    var url = this.action;
+    var coordinates = $('#coordinates').val().match('(\\D)(\\d+)');
+    var rawCoordinates = $('#coordinates').val();
+    coordinates = [convertAlphaNumeric(coordinates[1]), parseInt(coordinates[2])];
+
     // Don't want to follow the post URL...
     event.preventDefault();
 
+    console.log(coordinates);
+
     // Ajax POST to our API
-    $.post(url, target)
+    $.post(url, {coordinates: coordinates, rawCoordinates: rawCoordinates})
     .done(function(data) {
       // Success callback
+      console.log('POST.done', data);
     })
     .fail(function(error) {
       // Error callback
+      console.log('POST.fail', error);
     })
     .always(function() {
       // Always callback
@@ -52,8 +59,19 @@
     });
   });
 
-  function formatGrid(_result) {
+  function convertAlphaNumeric(_what) {
     var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var numeric = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+
+    if (!$.isNumeric(_what)) {
+      var uc = _what.toUpperCase();
+      return numeric[alpha.indexOf(uc)];
+    }
+
+    return alpha.charAt(_what);
+  }
+
+  function formatGrid(_result) {
     var board = _result.grid;
     var $output = $('.output');
     var tileType;
@@ -71,13 +89,13 @@
       for (y = 0; y < max + 1; y++) {
         tileType = $.isNumeric(board[x][y]) ? 'not-occupied' : 'occupied';
         if (y === 0) {
-          $('.letter-coordinates').append('<div class="tile"><span class="content">' + alpha.charAt(x) + '</span></div>');
+          $('.letter-coordinates').append('<div class="tile"><span class="content">' + convertAlphaNumeric(x) + '</span></div>');
         }
         if (y === max) {
-            $('.row-'+x).append('<div class="number-coordinates tile">' + x + '</div>')
+            $('.row-'+x).append('<div class="number-coordinates tile">' + x + '</div>');
         } else {
         $('.row-'+x).append(
-          '<div class="tile tile-' + alpha.charAt(y) + '_' + x + '">' +
+          '<div class="tile tile-' + convertAlphaNumeric(y) + '_' + x + '">' +
           '<span class="content hidden ' + tileType + '">' +
           board[x][y] + '</span>' + '</div>'
         );

@@ -13,8 +13,14 @@ function Ship(_type, _size) {
   this.type = _type;
   this.code = _type.charAt(0).toUpperCase();
   this.size = _size;
+  this.tiles = [];
   this.health = _size[_type];
 }
+
+
+Ship.prototype.setTiles = function (_coordinates) {
+  this.tiles = _coordinates;
+};
 
 /**
  * Register a hit on our Ship
@@ -24,11 +30,11 @@ Ship.prototype.hit = function() {
   if (!!this.health) {
     if (this.health > 1) {
       this.health--;
-      debug(this.type + 'hit');
+      debug(this.type + ' hit');
       return this.health;
     }
     this.health--;
-    debug(this.type + 'destroyed');
+    debug(this.type + ' destroyed');
     return this.health;
   }
   return 'X';
