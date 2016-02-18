@@ -59,10 +59,10 @@ router.post('/', function(req, res) {
 });
 
 // from an array of active ships object and a tile coordinate([x,y]), returns which ship stand on this tile
-function getShipFromTile(_activeShips, _tile) {
-  return _.filter(_activeShips, function(obj) {
+function getShipFromTile(activeShips, tile) {
+  return _.filter(activeShips, function(obj) {
     return _.find(obj.tiles, function(arr) {
-      return _.isEqual(arr, _tile) && obj;
+      return _.isEqual(arr, tile) && obj;
     });
   });
 }
