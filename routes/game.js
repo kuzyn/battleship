@@ -1,26 +1,31 @@
+var debug = require('debug')('battleship:routes/game');
 var express = require('express');
 var router = express.Router();
-var debug = require('debug')('battleship:routes/game');
 
-// Handle GET to /game by creating a new game
+//////////////////
+// Game routing //
+//////////////////
+
+// Handle GET to localhost:port/api/game by creating a new game
 router.get('/', function(req, res) {
   debug('GET');
-  var board = req.app.locals.game;
+
+  var game = req.app.locals.game;
   var executing = false;
 
-  if (board.gameOn && !executing) {
+  // if a grid is already populated, reset it
+  if (game.gameOn && !executing) {
     executing = true;
-    debug('gameOn '+ board.gameOn);
-    board.reset(function() {
-      board.grid = board.populate();
+    game.reset(function () { // callback to populate after our grid has resetted
+      game.grid = game.populate();
       executing = false;
     });
   } else {
-    board.grid = board.populate();
+    game.grid = game.populate();
     executing = false;
   }
 
-  res.json(board);
+  res.json(game);
 });
 
 module.exports = router;
