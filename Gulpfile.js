@@ -23,7 +23,7 @@ gulp.task('default', ['browser-sync'], function () {
 	gulp.watch(['./routes/**/*.js', './app.js', './bin/www', './bin/*.js'], ['bs-delay']);
 });
 
-// give nodemon time to restart
+// give nodemon time to restart befor we reload the page
 gulp.task('bs-delay', function () {
   setTimeout(function () {
     bs.reload({ stream: false });
@@ -38,7 +38,7 @@ gulp.task('nodemon', function (cb) {
 		ext: 'js',
 		ignore: ['public/**/*.js'],
 		env: {
-			'NODE_ENV': 'development',
+			'NODE_ENV': 'development-gulp',
 			'DEBUG': 'battleship:*'
 	 }
 	}).on('start', function () {

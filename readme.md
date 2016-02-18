@@ -3,21 +3,33 @@
 
 ### "Come come, commander, you enjoy firing torpedo just as much as I do"
 
-Express, node... a simple battleship game. Ahoy!
+Express, nodejs... a simple battleship game. Ahoy!
 
 :boat: => :boom:
 
 ## Deploy
 `npm install`  
-`npm run`
-or
-`npm run serve:debug`
+`npm run`  
+or  
+`npm run serve:debug`  
 
-Alternatively, to run in development mode:
-`gulp`
+You can then play at localhost:3000
 
-This will spawn a chromium-browser window and serve the app at localhost:4000
+Alternatively, to run in development mode:  
+`gulp`  
 
+This will spawn a chromium-browser window and serve the app (proxied by browser-sync) at `localhost:4000`  
+api/game  
+
+## API
+This is first and foremost a super-minimal API. Here are the default routes:  
+
+Route | Type | Return | Payload | Description
+--- | --- | --- | --- | ---
+*/api/game*       | **[GET]**     | Object  | n/a | Returns a populated board {} ready for a new game
+*/api/fire*       |  **[POST]**   | Object  | {coordinates: *[0,5]*, rawCoordinates: *"a5"*} | Returns an object with this construction *{hit: boolean, message: String, coordinates: Array(2), rawCoordinates: String, type: String, ship: Object}*
+
+Go on, try it with curl!
 
 ## License
 The MIT License (MIT)

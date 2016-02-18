@@ -1,10 +1,10 @@
+var Board = require('./bin/Board.js');
+var debug = require('debug')('battleship:app');
+var logger = require('morgan');
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
-var logger = require('morgan');
 var favicon = require('serve-favicon');
-var Board = require('./bin/Board.js');
-var debug = require('debug')('battleship:app');
 var app = express();
 
 
@@ -13,7 +13,7 @@ var app = express();
 /////////////////////////
 
 var config = {
-  "size": 10, // only a square grid is allowed
+  "size": 10, // our board size (only a square grid is allowed)
   "fleet": {
     "carrier": 1,
     "battleship": 1,
@@ -30,10 +30,15 @@ var config = {
   }
 };
 
-
+// here we go
 app.locals.game = new Board(config);
 
 debug('Game ID: ' + app.locals.game.id);
+
+
+///////////////////
+// Express setup //
+///////////////////
 
 // Routes
 var client = require('./routes/client'); // Client page route

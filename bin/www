@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
-// Module dependencies
-var app = require('../app');
 var debug = require('debug')('battleship:www');
 var http = require('http');
+var app = require('../app');
 
-// Get port from environment and store in Express
+// Get port from environment and store it
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -14,10 +13,12 @@ var server = http.createServer(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);
+
+// Event handlers
 server.on('error', onError);
 server.on('listening', onListening);
 
-// Catch the exeptions & keep our thread going
+// Catch exeptions & keep our thread going
 process.on('uncaughtException', function (err) {
   debug('Caught exception: ' + err);
 });
@@ -76,10 +77,10 @@ function onListening() {
            '\n'
           );
     if (process.env['BG_MODE']) {
-      process.stdout.write('  you\'ve sunk my battleship in the background! press ENTER to go back to the prompt\n');
+      process.stdout.write('  You\'ve sunk my battleship in the background! press ENTER to go back to the prompt\n');
     }
   }
-  if (process.env['NODE_ENV'] === 'development') {
+  if (process.env['NODE_ENV'] === 'development-gulp') {
     debug('Listening on ' + bind + ' and proxying browser-sync on 4000');
   } else {
     debug('Listening on ' + bind);
