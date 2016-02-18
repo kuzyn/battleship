@@ -3,90 +3,156 @@
 ////////////////////////////////
 
 (function() {
-  $(document).on('ready', initiateGame());
 
-  var fireCounter = 0;
-
-  function initiateGame() {
+  $(document).on('ready', initiateGame(), function() {
     console.info('document.ready');
-    var result;
-    var request = $.ajax({
-          type: "GET",
-          url: "/api/game",
-          data: "jsonp"
-    })
-    .done(function(data) {
-      console.info(JSON.stringify(data));
-      result = data;
-    })
-    .fail(function(jqXHR, textStatus, err) {
-      console.error(jqXHR.status + ' ' + err + ' ' + jqXHR);
-      result = jqXHR.status + ' ' + err;
-      $('.output-raw').html(JSON.stringify(jqXHR, null, 2));
-    })
-    .always(function() {
-      console.info('$.ajax.complete');
-      formatGrid(result);
-      $('.output-raw').html(JSON.stringify(result, null, 2));
-      $('.board .content, .output-raw').removeClass('hidden'); //foobar
-    });
-  }
+  });
+
+  // scope-wide vars
+  var shotCounter = 0;
+
+
+  //////////////
+  // Handlers //
+  //////////////
 
   $('#debug-mode').click(function(e) {
     e.stopPropagation();
-    $('.board .content, .output-raw').toggleClass('hidden');
+    $('.grid .content, .output-raw').toggleClass('hidden');
   });
 
   $('#reset').click(function(e) {
     e.stopPropagation();
-    $('.output').html('');
-    $('#coordinates').val('');
-    $('.results').html('');
-    fireCounter = 0;
     initiateGame();
+    (function reset() {
+      $('.output').html('');
+      $('.results').html('');
+      $('#coordinates').val('');
+      shotCounter = 0;
+    })();
   });
 
-  $('#fire').submit(function(event) {
-    var url = this.action;
+  // on submit, get and send our #coordinates to the backend
+  $('#fire').submit(function(e) {
+    e.preventDefault();
+    var url = this.action; // bind to the action="" data property in our view markup
     var coordinates = $('#coordinates').val().match('(\\D)(\\d+)');
     var rawCoordinates = $('#coordinates').val();
+    var results;
     coordinates = [convertAlphaNumeric(coordinates[1]), parseInt(coordinates[2])];
-
-    // Don't want to follow the post URL...
-    event.preventDefault();
 
     console.log(coordinates);
 
-    // Ajax POST to our API
-    $.post(url, {coordinates: coordinates, rawCoordinates: rawCoordinates})
-    .done(function(data) {
-      // Success callback
-      console.log('POST.done', data);
-      $('.results').html('<span>' + data.message + ' ' + data.type + ' ' + convertAlphaNumeric(coordinates) + '</span>');
-      var $tile = $('.tile-' + convertAlphaNumeric(coordinates[0]) + '_' + coordinates[1]);
-      if (data.hit) {
-        $tile.addClass('hit');
-        $tile.find('span').removeClass('hidden');
-      } else {
-        $tile.addClass('missed');
-      }
-    })
-    .fail(function(error) {
-      // Error callback
-      console.log('POST.fail', error);
-    })
-    .always(function() {
-      // Always callback
-      fireCounter++;
-      $('.fire-counter').html('<span>' + fireCounter + '</span>');
-      $('#coordinates').val('');
-    });
+    // post to our api
+    $.post(url, {
+        coordinates: coordinates,
+        rawCoordinates: rawCoordinates
+      })
+      .done(function(data) {
+        console.log(data);
+
+        var $tile = $('.tile-' + convertAlphaNumeric(coordinates[0]) + '_' + coordinates[1]);
+        results = '<span>' + data.message + ' ' + data.type + ' ' + convertAlphaNumeric(coordinates) + '</span>';
+
+        // if the api returns a hit message
+        if (data.hit) {
+          $tile.addClass('hit');
+          $tile.find('span').removeClass('hidden');
+        } else {
+          $tile.addClass('missed');
+        }
+      })
+      .fail(function(error) {
+        console.log(error);
+      })
+      .always(function() {
+        shotCounter++;
+        $('#coordinates').val('');
+        $('.results').html(results);
+        $('.fire-counter').html('<span>' + shotCounter + '</span>');
+      });
   });
 
-  function convertAlphaNumeric(_what) {
+
+  /**
+   * Get our grid, called after document ready
+   * @return {undefined}
+   */
+  function initiateGame() {
+    var url = '/api/game';
+    var result;
+    $.get(url)
+      .done(function(data) {
+        console.info(JSON.stringify(data));
+        result = data;
+      })
+      .fail(function(jqXHR, textStatus, err) {
+        console.error(jqXHR.status + ' ' + err + ' ' + jqXHR);
+        result = jqXHR.status + ' ' + err;
+      })
+      .always(function() {
+        $('.output-raw').html(JSON.stringify(result, null, 2));
+        formatGrid(result);
+      });
+  }
+
+
+  /**
+   * Given our game object, parse & format our grid
+   * @param  {object} result Our full result from GET /api/game
+   * @return {undefined}
+   */
+  function formatGrid(game) {
+    var $output = $('.output');
+    var $letterCoordinates;
+    var $rowX;
+    var grid = game.grid;
+    var max = grid.length;
+    var x = 0;
+    var y = 0;
+    var tileType = '';
+    var convertedX = '';
+
+    // start walking...
+    for (; x < max; x++) {
+      if (y === 0) {
+        $output.prepend('<div class="row letter-coordinates"></div>');
+      }
+
+      // caching selectors & return values
+      $output.append('<div class="row grid row-' + x + '"></div>');
+      $letterCoordinates = $('.letter-coordinates');
+      $rowX = $('.row-' + x);
+      convertedX = convertAlphaNumeric(x);
+
+      for (y = 0; y <= max; y++) {
+        tileType = $.isNumeric(grid[x][y]) ? 'not-occupied' : 'occupied';
+        if (y === 0) {
+          $letterCoordinates.append('<div class="tile"><span class="content">' + convertedX + '</span></div>');
+        }
+        if (y === max) {
+          $rowX.append('<div class="number-coordinates tile">' + x + '</div>');
+        } else {
+          $rowX.append(
+            '<div class="tile tile-' + convertAlphaNumeric(y) + '_' + x + '">' +
+            '<span class="content hidden ' + tileType + '">' +
+            grid[x][y] + '</span>' + '</div>'
+          );
+        }
+      }
+    }
+  }
+
+
+  /////////////
+  // Helpers //
+  /////////////
+
+  // Given a input (string or array), return a sanitized version of the input
+  function convertAlphaNumeric(input) {
     var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    var numeric = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
-    var string = _what;
+    var numeric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+    var string = input;
 
     // if we give an array of coordinates
     if ($.isArray(string)) {
@@ -102,43 +168,10 @@
     }
 
     // if we give a single coordinate to convert
-    if (!$.isNumeric(_what)) {
-      return numeric[alpha.indexOf(_what.toUpperCase())];
+    if (!$.isNumeric(input)) {
+      return numeric[alpha.indexOf(input.toUpperCase())];
     }
 
-    return alpha.charAt(_what);
-  }
-
-  function formatGrid(_result) {
-    var board = _result.grid;
-    var $output = $('.output');
-    var tileType;
-    var max = board.length;
-    var x = 0;
-    var y = 0;
-
-    for (x = 0; x < max; x++) {
-      if (y === 0) {
-        $output.prepend('<div class="row letter-coordinates"></div>');
-      }
-
-      $output.append('<div class="row board row-' + x + '"></div>');
-
-      for (y = 0; y < max + 1; y++) {
-        tileType = $.isNumeric(board[x][y]) ? 'not-occupied' : 'occupied';
-        if (y === 0) {
-          $('.letter-coordinates').append('<div class="tile"><span class="content">' + convertAlphaNumeric(x) + '</span></div>');
-        }
-        if (y === max) {
-            $('.row-'+x).append('<div class="number-coordinates tile">' + x + '</div>');
-        } else {
-        $('.row-'+x).append(
-          '<div class="tile tile-' + convertAlphaNumeric(y) + '_' + x + '">' +
-          '<span class="content hidden ' + tileType + '">' +
-          board[x][y] + '</span>' + '</div>'
-        );
-      }
-      }
-    }
+    return alpha.charAt(input);
   }
 })();
