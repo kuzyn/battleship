@@ -19,6 +19,7 @@
   $('#debug-mode').click(function(e) {
     e.stopPropagation();
     $('.grid .content, .output-raw').toggleClass('hidden');
+    $('.hit .content').removeClass('hidden'); // never hide our hit tiles
   });
 
   $('#reset').click(function(e) {
