@@ -7,9 +7,18 @@ h1 {
   margin-top: 0;
 }
 
+.hit {
+  background: salmon;
+}
+
+.missed {
+  background: navy;
+}
+
 .letter-coordinates .tile,
 .number-coordinates {
-  background: blue;
+  font-weight: bolder;
+  background: royalblue;
 }
 
 .output-raw {
@@ -26,6 +35,11 @@ h1 {
   height: 40px;
   text-align: center;
   border: 1px lightblue solid;
+}
+
+.tile span {
+  width: 40px;
+  height: 40px;
 }
 
 .tile .occupied {

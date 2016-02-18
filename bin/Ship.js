@@ -15,6 +15,7 @@ function Ship(_type, _size) {
   this.size = _size;
   this.tiles = [];
   this.health = _size[_type];
+  this.destroyed = false;
 }
 
 
@@ -31,13 +32,14 @@ Ship.prototype.hit = function() {
     if (this.health > 1) {
       this.health--;
       debug(this.type + ' hit');
-      return this.health;
+      return true;
     }
     this.health--;
     debug(this.type + ' destroyed');
-    return this.health;
+    this.destroyed = true;
+    return false;
   }
-  return 'X';
+  return null;
 };
 
 module.exports = Ship;

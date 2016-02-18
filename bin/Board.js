@@ -26,6 +26,13 @@ function Board(_config) {
 }
 
 
+Board.prototype.removeSunkenShip = function (_ship) {
+  var index = _.findIndex(this.activeShips, _ship);
+  var active = _.clone(this.activeShips);
+  this.activeShips = active.splice(index);
+};
+
+
 /**
  * Reset the grid by removing all ships & clearing the board
  * @param {function} _cb Optional callback to execute after

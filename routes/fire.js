@@ -12,33 +12,48 @@ router.post('/', function(req, res) {
   debug('POST ' + JSON.stringify(req.body));
 
   var board = req.app.locals.game;
-  var as = board.activeShips;
-  var grid = board.grid;
+  var rawCoordinates = req.body.coordinates;
   var x = parseInt(req.body.coordinates[1]);
   var y = parseInt(req.body.coordinates[0]);
-  var tile = [x, y];
-  var ship = _.filter(as, function(obj) {
-    return _.find(obj.tiles, function(arr) {
-      return _.isEqual(arr, tile) && obj;
-    });
-  });
+  var ship = getShipFromTile(board.activeShips, [x, y]);
 
-  if (!_.isEmpty(ship) && grid[x][y] !== 'X') {
-    ship[0].hit();
-    res.json({
-      hit: true,
-      message: 'HIT',
-      type: ship[0].type,
-      coordinates: [x, y]
-    });
+  var response = {
+    hit: true,
+    message: '',
+    coordinates: [y, x],
+    rawCoordinates: rawCoordinates,
+    type: '',
+    ship: {}
+  };
+
+  if (!_.isEmpty(ship)) {
+    response.ship = ship[0];
+    response.type = ship[0].type;
+    if (ship[0].hit()) {
+      response.message = 'HIT';
+      res.json(response);
+      if (ship[0].size >= 4 && ship[0].health === 2) {
+        response.message = 'HIT pleading survivors of the sinking';
+        res.json(response);
+      }
+    } else {
+      response.message = 'SANK';
+      board.removeSunkenShip(ship[0]);
+      res.json(response);
+    }
   } else {
-    res.json({
-      hit: false,
-      message: 'MISSED',
-      type: '',
-      coordinates: [x, y]
-    });
+    response.hit = false;
+    response.message = 'MISSED';
+    res.json(response);
   }
 });
+
+function getShipFromTile(_activeShips, _tile) {
+  return _.filter(_activeShips, function(obj) {
+    return _.find(obj.tiles, function(arr) {
+      return _.isEqual(arr, _tile) && obj;
+    });
+  });
+}
 
 module.exports = router;

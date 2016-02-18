@@ -63,6 +63,13 @@
       // Success callback
       console.log('POST.done', data);
       $('.results').html('<span>' + data.message + ' ' + data.type + ' ' + convertAlphaNumeric(coordinates) + '</span>');
+      var $tile = $('.tile-' + convertAlphaNumeric(coordinates[0]) + '_' + coordinates[1]);
+      if (data.hit) {
+        $tile.addClass('hit');
+        $tile.find('span').removeClass('hidden');
+      } else {
+        $tile.addClass('missed');
+      }
     })
     .fail(function(error) {
       // Error callback
@@ -71,7 +78,7 @@
     .always(function() {
       // Always callback
       fireCounter++;
-      $('.fire-counter').html('<span>' + fireCounter + '</span>')
+      $('.fire-counter').html('<span>' + fireCounter + '</span>');
       $('#coordinates').val('');
     });
   });

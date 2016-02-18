@@ -1,19 +1,23 @@
 ## Description
 ### BATTLESHIP!
 
-### "Come come, commander, you enjoy firing torpedo just as much as I do."
+### "Come come, commander, you enjoy firing torpedo just as much as I do"
 
-A simple implementation of the battleship game. Ahoy!
+Express, node... a simple battleship game. Ahoy!
 
 :boat: => :boom:
 
 ## Deploy
 `npm install`  
-`npm serve`
+`npm run`
+or
+`npm run serve:debug`
 
-This will create an interface where you can play at `localhost:3000`
+Alternatively, to run in development mode:
+`gulp`
 
-See `package.json`
+This will spawn a chromium-browser window and serve the app at localhost:4000
+
 
 ## License
 The MIT License (MIT)
