@@ -15,22 +15,50 @@ function Board(config) {
   debug('New instance of ' + this.constructor.name);
 
   this._id = _.random(0, 9000);
-  this._config = config;
-  this._size = config.size;
-  this._fleet = config.fleet;
-  this._grid = this._initiate(this._size);
+  this._size = config.size; // 10
+  this._fleet = config.fleet; // [{foo: 1, bar: 0}]
+  this._activeFleet = _.clone(config.fleet);
+  this._shipsLengths = config.shipsLengths; // [{foo: 1, bar: 0}]
+  this._grid = this._initiate(this._size); // [][]
   this._gameOn = false; // playing = true;
-  this._activeShips = [];
-  this._tilesWithShips = [];
+  this._activeShips = []; // [{},{},{}]
+  this._tilesWithShips = []; // [[],[],[]]
+  this._hitTiles = [];
 }
 
 
-// Board.prototype.removeSunkenShip = function (_ship) {
-//   var index = _.findIndex(this._activeShips, _ship);
-//   var active = _.clone(this._activeShips);
-//   this._activeShips = active.splice(index);
-// };
+/**
+ * Given coordinates, add them to an array that we can lookup
+ * @param {[type]} coordinates [description]
+ */
+Board.prototype._setHitTiles = function (coordinates) {
+  return this._hitTiles.push(coordinates);
+};
 
+/**
+ * Remove ships from our active list (aka they were sunk)
+ * @param  {string} type type of ship i.e. 'submarine'
+ * @return {undefined}
+ */
+Board.prototype._removeActiveShip = function(type) {
+
+  var fleet = this._activeFleet;
+
+  _.each(fleet, function(value, key) {
+    if (key === type) {
+        fleet[key] = fleet[key] !== 0 ? fleet[key] -1 : fleet[key];
+    }
+  });
+
+};
+
+/**
+ * Get a list of remaining active (not destroyed) ships
+ * @return {object} The boats & numbers
+ */
+Board.prototype._getRemainingShips = function() {
+  return this._activeFleet;
+};
 
 /**
  * Reset the grid by removing all ships & clearing the board
@@ -44,6 +72,8 @@ Board.prototype._reset = function(callback) {
   this._tilesWithShips = [];
   this._gameOn = false;
   this._grid = this._initiate(this._size);
+  this._activeFleet = this._fleet;
+  this._hitTiles = [];
 
   if (callback && _.isFunction(callback)) {
     callback();
@@ -63,8 +93,8 @@ Board.prototype._initiate = function(size) {
   var res = [];
   var row = [];
 
-  for (var x = 0, xz = size; x < xz; x++) {
-    for (var y = 0, yz = size; y < yz; y++) {
+  for (var x = 0; x < size; x++) {
+    for (var y = 0; y < size; y++) {
       row.push(0);
     }
     res.push(row);
@@ -85,7 +115,7 @@ Board.prototype._populate = function() {
   debug('populate');
 
   var populatedGrid = _.clone(this._grid); // once processed this will become our return object
-  var allShipsLengths = _.clone(this._config.shipsLengths);
+  var allShipsLengths = _.clone(this._shipsLengths);
   var tilesWithShips = this._tilesWithShips;
   var activeShips = this._activeShips;
   var shipsRemaining = getShipList(_.clone(this._fleet)); // our list of ships to place
@@ -144,7 +174,7 @@ Board.prototype._populate = function() {
         collisionsCounter++;
       }
 
-      // error handling (now throwing a new Error object to keep execution going)
+      // error handling
       if (collisionsCounter > 300) {
 
         try {
@@ -175,7 +205,7 @@ Board.prototype._populate = function() {
     var conflicts = 0;
     var pointer = [];
 
-    for (var i = 0; i < buffer.length; i++) {
+    for (var i = 0, z = buffer.length; i < z; i++) {
       pointer = [buffer[i][0], buffer[i][1]];
       conflicts += !_.isSafeInteger(grid[pointer[0]][pointer[1]]) ? 1 : 0;
     }

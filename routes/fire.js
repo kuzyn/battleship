@@ -13,6 +13,7 @@ router.post('/', function(req, res) {
   debug('POST ' + JSON.stringify(req.body));
 
   var game = req.app.locals.game;
+  var hitTiles = game._hitTiles;
   var length = game._grid.length;
   var dirtyCoordinates = req.body.coordinates;
   var x = parseInt(req.body.coordinates[1]);
@@ -21,49 +22,77 @@ router.post('/', function(req, res) {
 
   // our response json
   var response = {
-    impact: true,
+    impact: undefined,
     message: '',
     coordinates: [y, x],
     dirtyCoordinates: dirtyCoordinates,
     type: '',
+    remaining: game._getRemainingShips(),
     ship: {}
   };
 
-  // if our tile contains a ship
-  if (!_.isEmpty(ship)) {
-
-    ship = ship[0];
-    response.ship = ship;
-    response.type = ship._type;
-
-    if (ship._hit()) { //
-      response.message = 'HIT';
+  // if we hit the same tile again...
+  if (hitBefore(hitTiles, [y, x])) {
+    if (!_.isEmpty(ship)) {
+      response.message = 'HIT pleading survivors of the sinking';
       res.json(response);
-      // if (ship[0].size >= 4 && ship[0].health === 2) {
-      //   response.message = 'HIT pleading survivors of the sinking';
-      //   res.json(response);
-      // }
+
     } else {
-      response.message = 'SANK';
-      // game.removeSunkenShip(ship[0]);
+
+      response.message = 'HIT the exact same spot as before';
       res.json(response);
     }
 
-  } else {
+  } else { // never before hit
+    response.impact = true;
 
-    if (x <= length && y <= length) {
+    if (!_.isEmpty(ship)) { // if our tile contains a ship
+      ship = ship[0];
+      response.ship = ship;
+      response.type = ship._type;
+
+      if (ship._hit([x, y])) {
+        response.message = 'HIT';
+        res.json(response);
+
+      } else {
+
+        response.message = 'SANK';
+        game._removeActiveShip(ship._type);
+        res.json(response);
+      }
+
+    } else { // !_.isEmpty(ship)
       response.impact = false;
-      response.message = 'MISSED';
-      res.json(response);
-    } else {
-      response.impact = false;
-      response.message = 'OUT OF THE WATER PARK';
-      res.json(response);
+
+      if (x <= length && y <= length) {
+        response.message = 'MISSED';
+        res.json(response);
+
+      } else {
+
+        response.message = 'OUT OF THE WATER PARK';
+        res.json(response);
+      }
+
     }
+
+    game._setHitTiles([y, x]);
 
   }
 
 });
+
+// Given an array of previously hit tiles & a tile, will try to find the latter in the former
+function hitBefore(hitTiles, tile) {
+  for (var i = 0; i < hitTiles.length; i++) {
+    console.log(hitTiles[i]);
+    if (_.isEqual(hitTiles[i], tile)) {
+      return true;
+    }
+  }
+  return false
+}
 
 // from an array of active ships object and a tile coordinate([x,y]), returns which ship stand on this tile
 function getShipFromTile(activeShips, tile) {

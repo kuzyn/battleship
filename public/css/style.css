@@ -17,12 +17,18 @@ h1 {
 
 .letter-coordinates .tile,
 .number-coordinates {
-  font-weight: bolder;
   background: royalblue;
+  font-weight: bolder;
 }
 
 .output-raw {
   padding-top: 40px;
+}
+
+.remaining-evils {
+  height: 20px;
+  font-style: italic;
+  padding: 10px 0 10px;
 }
 
 .shot-fired {
@@ -30,16 +36,16 @@ h1 {
 }
 
 .tile {
+  border: 1px lightblue solid;
   float: left;
-  width: 40px;
   height: 40px;
   text-align: center;
-  border: 1px lightblue solid;
+  width: 40px;
 }
 
 .tile span {
-  width: 40px;
   height: 40px;
+  width: 40px;
 }
 
 .tile .occupied {

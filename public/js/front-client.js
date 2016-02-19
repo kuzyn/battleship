@@ -22,6 +22,7 @@
     $('.hit .content').removeClass('hidden'); // never hide our hit tiles
   });
 
+
   $('#reset').click(function(e) {
     e.stopPropagation();
     initiateGame();
@@ -36,49 +37,52 @@
 
   });
 
+
   // on submit, get and send our #coordinates to the backend
   $('#fire').submit(function(e) {
     e.preventDefault();
     var url = this.action; // bind to the action property in our markup
+    var results;
+    var remaining;
     var coordinates = $('#coordinates').val().match('(\\D)(\\d+)');
     var rawCoordinates = $('#coordinates').val();
-    var results;
     coordinates = [convertAlphaNumeric(coordinates[1]), parseInt(coordinates[2])];
 
     console.log(coordinates);
 
     // post to our api
     $.post(url, {
-      coordinates: coordinates,
-      rawCoordinates: rawCoordinates
-    })
+        coordinates: coordinates,
+        rawCoordinates: rawCoordinates
+      })
+      .done(function(data) {
+        console.log(data);
 
-    .done(function(data) {
-      console.log(data);
+        var $tile = $('.tile-' + convertAlphaNumeric(coordinates[0]) + '_' + coordinates[1]);
+        results = '<span>' + data.message + ' ' + data.type + ' ' + convertAlphaNumeric(coordinates) + '</span>';
+        remaining = JSON.stringify(data.remaining).replace(/["'{\[\]}]/g, '').replace(/,/g, ',\x20');
 
-      var $tile = $('.tile-' + convertAlphaNumeric(coordinates[0]) + '_' + coordinates[1]);
-      results = '<span>' + data.message + ' ' + data.type + ' ' + convertAlphaNumeric(coordinates) + '</span>';
+        // if the api returns a hit message
+        if (data.impact !== undefined) {
+          if (data.impact) {
+            $tile.addClass('hit');
+            $tile.find('span').removeClass('hidden');
+          } else {
+            $tile.addClass('missed');
+          }
+        }
 
-      // if the api returns a hit message
-      if (data.impact) {
-        $tile.addClass('hit');
-        $tile.find('span').removeClass('hidden');
-      } else {
-        $tile.addClass('missed');
-      }
-
-    })
-
-    .fail(function(error) {
-      console.log(error);
-    })
-
-    .always(function() {
-      shotCounter++;
-      $('#coordinates').val('');
-      $('.results').html(results);
-      $('.fire-counter').html('<span>' + shotCounter + '</span>');
-    });
+      })
+      .fail(function(error) {
+        console.log(error);
+      })
+      .always(function() {
+        shotCounter++;
+        $('#coordinates').val('');
+        $('.remaining-evils').html('<p>EVILS LEFT: ' + remaining + '</p>');
+        $('.results').html(results);
+        $('.fire-counter').html('<span>' + shotCounter + '</span>');
+      });
 
   }); // $('#fire').submit
 
@@ -90,22 +94,23 @@
   function initiateGame() {
     var url = '/api/game';
     var result;
+    var remaining;
 
     $.get(url)
       .done(function(data) {
         console.info(JSON.stringify(data));
         result = data;
+        remaining = JSON.stringify(data._fleet).replace(/["'{\[\]}]/g, '').replace(/,/g, ',\x20');
       })
-
-    .fail(function(jqXHR, textStatus, err) {
-      console.error(jqXHR.status + ' ' + err + ' ' + jqXHR);
-      result = jqXHR.status + ' ' + err;
-    })
-
-    .always(function() {
-      $('.output-raw').html(JSON.stringify(result, null, 2));
-      formatGrid(result);
-    });
+      .fail(function(jqXHR, textStatus, err) {
+        console.error(jqXHR.status + ' ' + err + ' ' + jqXHR);
+        result = jqXHR.status + ' ' + err;
+      })
+      .always(function() {
+        $('.output-raw').html(JSON.stringify(result, null, 2));
+        $('.remaining-evils').html('<p>EVILS LEFT: ' + remaining + '</p>');
+        formatGrid(result);
+      });
 
   }
 
