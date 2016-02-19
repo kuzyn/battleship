@@ -14,14 +14,14 @@ var app = express();
 
 var config = {
   "size": 10, // our board size (only a square grid is allowed)
-  "fleet": {
+  "fleet": { // boats that we want on the board
     "carrier": 1,
     "battleship": 1,
     "submarine": 1,
     "destroyer": 2,
     "patrol_boat": 1,
   },
-  "boat_length": {
+  "shipsLengths": { // how long each boat is
     "carrier": 5,
     "battleship": 4,
     "submarine": 3,
@@ -30,10 +30,10 @@ var config = {
   }
 };
 
-// here we go
+// here we go!
 app.locals.game = new Board(config);
 
-debug('Game ID: ' + app.locals.game.id);
+debug('Game ID: ' + app.locals.game._id);
 
 
 ///////////////////
@@ -78,10 +78,12 @@ app.use(function(req, res, next) {
 // Error handler development (will print stacktrace)
 app.use(function(err, req, res) {
   res.status(err.status || 500);
+
   res.render('error', {
     message: err.message,
     error: err
   });
+
 });
 
 module.exports = app;

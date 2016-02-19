@@ -1,75 +1,78 @@
-///////////////////
-// Board object! //
-///////////////////
+//////////////////
+// Board class! //
+//////////////////
 
-var rotate = require('matrix-rotate');
-var _ = require('lodash');
-var Ship = require('../bin/Ship.js');
 var debug = require('debug')('battleship:Board');
+var Ship = require('../bin/Ship.js');
+var _ = require('lodash');
 
 
 /**
  * Constructor for our Board
- * @param {object} _config our passed config object containing size and fleet infos
+ * @param {object} config Our passed config object containing size and fleet infos
  */
-function Board(_config) {
-  this.id = Math.floor(Math.random() * (9999 - 0)) + 0;
-  this.config = _config;
-  this.size = _config.size;
-  this.ships = _config.fleet;
-  this.grid = this.initiate(this.size);
-  this.dirg = rotate(_.clone(this.grid)); // This is a flipped matrix to do our vertical placements
-  this.gameOn = false; // playing = true;
-  this.activeShips = [];
-  this.tilesWithShips = [];
-  this.shipsLengths = _config.boat_length;
+function Board(config) {
+  debug('New instance of ' + this.constructor.name);
+
+  this._id = _.random(0, 9000);
+  this._config = config;
+  this._size = config.size;
+  this._fleet = config.fleet;
+  this._grid = this._initiate(this._size);
+  this._gameOn = false; // playing = true;
+  this._activeShips = [];
+  this._tilesWithShips = [];
 }
 
 
-Board.prototype.removeSunkenShip = function (_ship) {
-  var index = _.findIndex(this.activeShips, _ship);
-  var active = _.clone(this.activeShips);
-  this.activeShips = active.splice(index);
-};
+// Board.prototype.removeSunkenShip = function (_ship) {
+//   var index = _.findIndex(this._activeShips, _ship);
+//   var active = _.clone(this._activeShips);
+//   this._activeShips = active.splice(index);
+// };
 
 
 /**
  * Reset the grid by removing all ships & clearing the board
- * @param {function} _cb Optional callback to execute after
+ * @param {function} callback Optional callback to execute after
  */
-Board.prototype.reset = function(_cb) {
+Board.prototype._reset = function(callback) {
   debug('reset');
 
-  this.id = Math.floor(Math.random() * (9999 - 0)) + 0;
-  this.activeShips = [];
-  this.tilesWithShips = [];
-  this.gameOn = false;
-  this.grid = this.initiate(this.size);
+  this._id = Math.floor(Math.random() * (9999 - 0)) + 0;
+  this._activeShips = [];
+  this._tilesWithShips = [];
+  this._gameOn = false;
+  this._grid = this._initiate(this._size);
 
-  if (_cb && _.isFunction(_cb)) {
-    _cb();
+  if (callback && _.isFunction(callback)) {
+    callback();
   }
 
 };
 
 
 /**
- * Initilize our Board with numbered tiles
- * @param  {int} _size Size of our square (we will rotate the matrix so it needs to be square)
+ * Initialize our Board with empty (0) tiles
+ * @param  {int} size Size of our grid
  * @return {array}    return a 2D array with each position numbered
  */
-Board.prototype.initiate = function(_size) {
+Board.prototype._initiate = function(size) {
   debug('initiate');
+
   var res = [];
   var row = [];
-  for (var x = 0, xz = _size; x < xz; x++) {
-    for (var y = 0, yz = _size; y < yz; y++) {
+
+  for (var x = 0, xz = size; x < xz; x++) {
+    for (var y = 0, yz = size; y < yz; y++) {
       row.push(0);
     }
     res.push(row);
     row = [];
   }
+
   return res;
+
 };
 
 
@@ -78,34 +81,35 @@ Board.prototype.initiate = function(_size) {
  * @param  {object} _ships A list of our boats + their number
  * @return {array}        Returns a populated version of our grid
  */
-Board.prototype.populate = function() {
+Board.prototype._populate = function() {
   debug('populate');
-  var occupiedTiles = this.tilesWithShips; // register
-  var shipsCollection = this.activeShips;
-  var shipsRemaining = getShipList(_.clone(this.ships)); // our list of ships to place
-  var populatedGrid = _.clone(this.grid); // our return object
+
+  var populatedGrid = _.clone(this._grid); // once processed this will become our return object
+  var allShipsLengths = _.clone(this._config.shipsLengths);
+  var tilesWithShips = this._tilesWithShips;
+  var activeShips = this._activeShips;
+  var shipsRemaining = getShipList(_.clone(this._fleet)); // our list of ships to place
   var collisionsCounter = 0;
-  var allShipsLengths = _.clone(this.shipsLengths);
 
+  // while our list of ships to place isn't empty
   while (!!shipsRemaining.length) {
-    var placed = false; // our current ship status on the board
-    var horizontal = decideOrientation();
-    var matrix = horizontal ? populatedGrid : populatedGrid; // grid = vertical align, dirg = horizontal align
+    var placed = false;
+    var horizontal = !!_.random(); // _.random default to 0,1
 
-    // Create our ship & assign its length
+    // create our ship & assign its length
     var ship = new Ship(shipsRemaining.pop(), allShipsLengths);
-    ship.size = getShipSize(ship.type, allShipsLengths);
+    ship._size = getShipSize(ship._type, allShipsLengths);
 
     while (!placed) {
-      var size = ship.size;
-      var max = matrix.length - size; // make sure our boat stay within the board's edge
+      var size = ship._size;
+      var flatTWS = _.flatten(tilesWithShips); // flatten our tiles so we can search them better
+      var max = populatedGrid.length - size; // make sure our boat stay within the board's edge
       var pos = [getRandomInt(0, max), getRandomInt(0, max)];
       var posEnd = horizontal ? [pos[0], pos[1] + size] : [pos[0] + size, pos[1]];
       var posBuffer = [];
-      var flatten = _.flatten(occupiedTiles); // flatten our tiles so we can search them better
 
       // pre-emptive check for collisions
-      while (_.find(flatten, pos) || _.find(flatten, posEnd)) {
+      while (_.find(flatTWS, pos) || _.find(flatTWS, posEnd)) {
         pos = [getRandomInt(0, max), getRandomInt(0, max)];
         posEnd = horizontal ? [pos[0], pos[1] + size] : [pos[0] + size, pos[1]];
       }
@@ -121,84 +125,87 @@ Board.prototype.populate = function() {
         }
       }
 
-      // only register our boats positions when we find an arrangement without collisions
-      if (noCollision(posBuffer, populatedGrid)) {
+      // only push the buffer once we're sure that there is no collisions
+      if (noCollisions(posBuffer, populatedGrid)) {
         for (var k = 0; k < posBuffer.length; k++) {
           var x = posBuffer[k][0];
           var y = posBuffer[k][1];
-          populatedGrid[x][y] = ship.code;
+          populatedGrid[x][y] = ship._code;
         }
 
-        occupiedTiles = horizontal ? occupiedTiles.reverse() : occupiedTiles;
+        tilesWithShips = horizontal ? tilesWithShips.reverse() : tilesWithShips;
 
-        occupiedTiles.push(posBuffer);
-        ship.setTiles(posBuffer);
-
-        shipsCollection.push(ship);
+        tilesWithShips.push(posBuffer);
+        ship._setTiles(posBuffer);
+        activeShips.push(ship);
         placed = true;
+
       } else {
         collisionsCounter++;
       }
 
       // error handling (now throwing a new Error object to keep execution going)
-      if (collisionsCounter > 200) {
+      if (collisionsCounter > 300) {
+
         try {
-          var err = new Error(collisionsCounter + ' collisions, try reducing the number of ships or refreshing the page');
+          var err = new Error(collisionsCounter + ' try refreshing the page');
           throw err;
         } catch (err) {
           debug(err);
           break;
         }
+
       }
-    }
+
+    } // while (!placed)
   } // while (!!shipsRemaining.length)
 
-  // all of our ships are placed
+  // all of our ships are placed!
   debug('Grid solved in ' + collisionsCounter + ' passes');
-  this.gameOn = true;
+  this._gameOn = true;
   return populatedGrid;
 
 
   /////////////
-  // HELPERS //
+  // HELPERS //horizontal
   /////////////
 
-  // Get our position buffer and validate each tile, return a boolean false if a tile already has a boat
-  function noCollision(_buffer, _matrix) {
+  // From our position buffer and grid, return a boolean false if a tile already has a boat
+  function noCollisions(buffer, grid) {
     var conflicts = 0;
     var pointer = [];
-    for (var i = 0; i < _buffer.length; i++) {
-      pointer = [_buffer[i][0], _buffer[i][1]];
-      conflicts += !_.isSafeInteger(_matrix[pointer[0]][pointer[1]]) ? 1 : 0;
-    }
-    return !conflicts;
-  }
 
-  // Return a pseudo-randomly chosen boolean (true = horizontal)
-  function decideOrientation() {
-    return Math.random() < 0.5 ? true : false;
+    for (var i = 0; i < buffer.length; i++) {
+      pointer = [buffer[i][0], buffer[i][1]];
+      conflicts += !_.isSafeInteger(grid[pointer[0]][pointer[1]]) ? 1 : 0;
+    }
+
+    return !conflicts;
+
   }
 
   // Given a list of ships to place, return their name in an array
-  function getShipList(_shipsList) {
-    var ships = _shipsList;
+  function getShipList(collection) {
     var remaining = [];
-    _.forEach(ships, function(value, key) {
+
+    _.forEach(collection, function(value, key) {
       for (var i = 0; i < value; i++) {
         remaining.push(key);
       }
     });
+
     return remaining;
+
   }
 
-  // Given a ship type and size list, return the ship size
-  function getShipSize(_type, _sizeList) {
-    return _sizeList[_type];
+  // Given a ship type and size list, return the corresponding ship size
+  function getShipSize(type, list) {
+    return list[type];
   }
 
   // Given a min-max, return a random int
-  function getRandomInt(_min, _max) {
-    return Math.floor(Math.random() * (_max - _min)) + _min;
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
   }
 
 };

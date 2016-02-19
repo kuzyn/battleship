@@ -14,18 +14,22 @@ router.get('/', function(req, res) {
   var executing = false;
 
   // if a grid is already populated, reset it
-  if (game.gameOn && !executing) {
+  if (game._gameOn && !executing) {
+
     executing = true;
-    game.reset(function () { // callback to populate after our grid has resetted
-      game.grid = game.populate();
+
+    game._reset(function() { // callback to populate after our grid has resetted
+      game._grid = game._populate();
       executing = false;
     });
+
   } else {
-    game.grid = game.populate();
+    game._grid = game._populate();
     executing = false;
   }
 
   res.json(game);
+
 });
 
 module.exports = router;
