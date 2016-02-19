@@ -8,18 +8,22 @@ Express, nodejs... a simple battleship game. Ahoy!
 :boat: => :boom:
 
 ## Deploy
+Install dependencies:  
 `npm install`  
+
+Run in development mode:  
+`gulp`  
+
+And play a browser-sync proxied version on `localhost:4000`  
+
+Alternatively you can:  
+
 `npm run`  
 or  
 `npm run serve:debug`  
 
-You can then play at localhost:3000
+And play at `localhost:3000` 
 
-Alternatively, to run in development mode:  
-`gulp`  
-
-This will spawn a chromium-browser window and serve the app (proxied by browser-sync) at `localhost:4000`  
-api/game  
 
 ## API
 This is first and foremost a super-minimal API. Here are the default routes:  
