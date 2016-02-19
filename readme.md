@@ -8,20 +8,16 @@ Express, nodejs... a simple battleship game. Ahoy!
 :boat: => :boom:
 
 ## Deploy
-Install dependencies:  
+
+Run locally in develop mode:  
 `npm install`  
-
-Run in development mode:  
 `gulp`  
-
 And play a browser-sync proxied version on `localhost:4000`  
 
 Alternatively you can:  
-
 `npm run`  
 or  
 `npm run serve:debug`  
-
 And play at `localhost:3000` 
 
 
@@ -36,6 +32,9 @@ Route | Type | Return | Payload | Description
 Go on, try it with curl:  
 1. instantiate the game with `curl --url http://localhost:3000/api/game`  
 2. fire away with `curl -d "coordinates=05"  --url http://localhost:3000/api/fire `  
+3. 
+
+![alt tag](http://cdn-static.denofgeek.com/sites/denofgeek/files/styles/insert_main_wide_image/public/part_5_image_2.jpg)
 
 ## License
 The MIT License (MIT)
