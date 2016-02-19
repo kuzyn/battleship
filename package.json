@@ -1,6 +1,6 @@
 {
   "name": "battleship",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -8,7 +8,7 @@
     "serve:background": "NODE_ENV=production BG_MODE=true node ./bin/www &",
     "serve:debug": "NODE_ENV=development DEBUG=* node ./bin/www",
     "serve:develop": "gulp",
-    "test": "echo 'no test yet :('"
+    "test": "echo 'no tests yet :('"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
