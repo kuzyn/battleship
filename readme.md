@@ -12,12 +12,10 @@ Express, nodejs... a simple battleship game. Ahoy!
 Run locally in develop mode:  
 `npm install`  
 `gulp`  
-And play a browser-sync proxied version on `localhost:4000`  
+And test a browser-sync proxied version on `localhost:4000`  
 
 Alternatively you can:  
-`npm run`  
-or  
-`npm run serve:debug`  
+`npm run serve` or `npm run serve:debug`  
 And play at `localhost:3000` 
 
 
