@@ -1,9 +1,9 @@
 ## Description
 ### BATTLESHIP!
 
-### "Come come, commander, you enjoy firing torpedo just as much as I do"
-
 Express, nodejs... a simple battleship game. Ahoy!
+
+Play at https://battleship-kuzyn.herokuapp.com/
 
 :boat: => :boom:
 
