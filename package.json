@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "private": true,
   "license": "MIT",
+  "bin": "./bin/www",
   "scripts": {
     "serve": "NODE_ENV=production node ./bin/www",
     "serve:background": "NODE_ENV=production BG_MODE=true node ./bin/www &",
