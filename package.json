@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "./bin/www",
   "scripts": {
+    "start": "node ./bin/www",
     "serve": "NODE_ENV=production node ./bin/www",
     "serve:background": "NODE_ENV=production BG_MODE=true node ./bin/www &",
     "serve:debug": "NODE_ENV=development DEBUG=* node ./bin/www",
